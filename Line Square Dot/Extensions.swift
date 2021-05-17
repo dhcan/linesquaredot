@@ -33,3 +33,13 @@ extension CGPoint {
         )
     }
 }
+
+extension CGPath {
+    
+    func mutableLinePath(fromPosition position: CGPoint) -> CGMutablePath {
+        let path = CGMutablePath()
+        path.move(to: position)
+        path.addLine(to: position)
+        return path
+    }
+}

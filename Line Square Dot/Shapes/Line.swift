@@ -10,8 +10,6 @@ import SpriteKit.SKShapeNode
 
 final class Line: SKShapeNode {
     
-    private let maxLength: CGFloat = 50
-
     init(path: CGPath) {
         super.init()
         
@@ -19,6 +17,14 @@ final class Line: SKShapeNode {
         alpha = 0.2
         lineCap = .round
         strokeColor = UIColor.random
+    }
+    
+    convenience init(initialPosition position: CGPoint) {
+        let path = CGMutablePath()
+        path.move(to: position)
+        path.addLine(to: position)
+        
+        self.init(path: path)
     }
     
     required init?(coder aDecoder: NSCoder) {

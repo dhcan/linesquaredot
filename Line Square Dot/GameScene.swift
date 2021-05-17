@@ -20,14 +20,19 @@ final class GameScene: SKScene {
     private var touchDown: CGPoint = .zero
     private var ignoreTouchesMoved: Bool = false
     
+    let playSound: (String) -> SKAction = {
+        SKAction.playSoundFileNamed($0, waitForCompletion: false)
+    }
+    
     override init(size: CGSize) {
         super.init(size: size)
-        
+
+        run(playSound(""))
         scaleMode = .aspectFit
         backgroundColor = .black
         
         physicsWorld.contactDelegate = self
-        physicsWorld.speed = 0.5
+        physicsWorld.speed = 0.75
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -1.0)
         
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
@@ -64,12 +69,9 @@ extension GameScene {
         
         touchDown = position
         ignoreTouchesMoved = false
+
+        line = Line(initialPosition: position)
         
-        let path = CGMutablePath()
-        path.move(to: position)
-        path.addLine(to: position)
-        
-        line = Line(path: path)
         guard let line = line else { return }
         
         addChild(line)
@@ -88,7 +90,8 @@ extension GameScene {
         
         line?.path = path
         
-        if touchDown.distance(from: position) > 256 {
+        let maxDistance: CGFloat = 256.0
+        if touchDown.distance(from: position) > maxDistance {
             ignoreTouchesMoved = true
             addLine()
         }
@@ -153,6 +156,8 @@ private extension GameScene {
     }
 }
 
+import AudioToolbox
+
 extension GameScene: SKPhysicsContactDelegate {
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -160,12 +165,12 @@ extension GameScene: SKPhysicsContactDelegate {
         
         switch dotBody.categoryOfContact() {
         case .line:
-            run(SKAction.playSoundFileNamed("line.wav", waitForCompletion: false))
+            run(playSound("line.wav"))
         case .boundary:
-            run(SKAction.playSoundFileNamed("boundary.wav", waitForCompletion: false))
+            run(playSound("boundary.wav"))
             newGame()
         case .square:
-            run(SKAction.playSoundFileNamed("square.wav", waitForCompletion: false))
+            run(playSound("square.wav"))
             square.animateFill()
             scoreLabel.score = scoreLabel.score + 1
             dot.disable()
@@ -176,3 +181,5 @@ extension GameScene: SKPhysicsContactDelegate {
         }
     }
 }
+
+

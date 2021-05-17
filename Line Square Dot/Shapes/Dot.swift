@@ -8,7 +8,6 @@
 
 import SpriteKit.SKShapeNode
 
-
 final class Dot: SKShapeNode {
     
     override init() {
